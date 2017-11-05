@@ -1,9 +1,12 @@
 package com.ivan9105;
 
 
+import com.ivan9105.input.Input;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Main implements Runnable {
@@ -31,6 +34,9 @@ public class Main implements Runnable {
         glfwSetWindowPos(window,
                 vidMode.width() / 2 - SCREEN_WIDTH / 2,
                 vidMode.height() / 2 - SCREEN_HEIGHT / 2);
+
+        glfwSetKeyCallback(window, new Input());
+
         if (window == NULL) {
             //Todo handle it
             return;
@@ -38,6 +44,11 @@ public class Main implements Runnable {
 
         glfwMakeContextCurrent(window);
         glfwShowWindow(window);
+
+        GL.createCapabilities();
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glEnable(GL_DEPTH_TEST);
+        System.out.println("OpenGL: " + glGetString(GL_VERSION));
     }
 
     @Override
@@ -58,6 +69,7 @@ public class Main implements Runnable {
     }
 
     private void render() {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwSwapBuffers(window);
     }
 
