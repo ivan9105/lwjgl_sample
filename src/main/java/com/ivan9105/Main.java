@@ -1,7 +1,10 @@
 package com.ivan9105;
 
 
+import com.ivan9105.graphics.Shader;
 import com.ivan9105.input.Input;
+import com.ivan9105.level.Level;
+import com.ivan9105.maths.Matrix4f;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
@@ -16,6 +19,8 @@ public class Main implements Runnable {
     private Thread thread;
     private boolean running = false;
     private long window;
+
+    private Level level;
 
     public void start() {
         running = true;
@@ -49,6 +54,12 @@ public class Main implements Runnable {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         System.out.println("OpenGL: " + glGetString(GL_VERSION));
+        Shader.loadAll();
+        Shader.BG.enable();
+        Matrix4f pr_martix = Matrix4f.orthographic(-10.0f, 10.0f, -10.0f * 9.0f / 16.0f, 10.0f * 9.0f / 16.0f, -1.0f, 1.0f);
+        Shader.BG.setUniformMatrix4f("pr_matrix", pr_martix);
+        Shader.BG.disable();
+        level = new Level();
     }
 
     @Override
@@ -70,6 +81,11 @@ public class Main implements Runnable {
 
     private void render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        level.render();
+        int errorCode = glGetError();
+        if (errorCode != GL_NO_ERROR) {
+            System.out.println(errorCode);
+        }
         glfwSwapBuffers(window);
     }
 
